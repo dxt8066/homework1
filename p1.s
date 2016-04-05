@@ -6,7 +6,7 @@
 * >> DIFFERENCE: Subtracts register R2 from R1, returning result in register R0. 
 * >> PRODUCT: Multiplies registers R1 and R2, returning the result in register R0.
 * >> MAX: Compares registers R1 and R2, returning the maximum of the two values in R0
-* @AUTHOR Bhakti Chhetri
+* @AUTHOR Deva Timsina
 ******************************************************************************/
 
 .global main 
