@@ -1,3 +1,6 @@
+/*DEVA TIMSINA*/
+
+
 .data
 
 prompt1: .asciiz "\Enter a number to partition (n): "
