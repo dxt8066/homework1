@@ -15,24 +15,24 @@
       .func main
 
 main:
-  BL _prompt                  @branch to _prompt with return                 
+  BL _prompt                  @branch to prompt procedure with return                 
   BL _scanf                   @branch to scanf 
   MOV R4, R0                  @move return  R0 to R6
   MOV R1, R0
   BL _fact                  
-  MOV R1, R4
+  MOV R1, R4                  @ pass n to printf procedure
   MOV R2, R0
   BL _printf
   B _exit
   
 _exit:
-  MOV R7, #4
+  MOV R7, #4                  @ write syscall, 4
   MOV R0, #1
   MOV R2, #21
   LDR R1, = exit_str
   SWI 0
   MOV R7, #1
-  SWI 0
+  SWI 0                        @ execute syscall
 
 _prompt:               
   PUSH {R1}
@@ -63,17 +63,17 @@ _scanf:
   SUB SP, SP, #4
   PUSH {LR}
   PUSH {R1}
-  LDR R0, =format_str
-  MOV R1, SP
+  LDR R0, =format_str               @ R0 contains address of format string
+  MOV R1, SP                        @ move SP to R1 to store entry on stack
   BL scanf
-  LDR R0, [SP]
+  LDR R0, [SP]                      @ load value at SP into R0
   ADD SP, SP, #4
   POP {R1}
   POP {PC}
   MOV PC, R4
   
 _fact:
-  PUSH {LR}
+  PUSH {LR}                             @ store the return address
   CMP R1,#1
   MOVEQ R0, #1
   POPEQ {PC}
@@ -97,8 +97,8 @@ _fact:
   POP {PC}
    
 .data
-number:					.word 	  0
-format_str:             .asciz    "%d"
-prompt_str:             .ascii    "Enter your number and press result key: "
-printf_str:             .asciz    " The result is: %d\n"
-exit_str:				.ascii 	  "Terminating program.\n"
+number:			  .word 	  0
+format_str:       .asciz    "%d"
+prompt_str:       .ascii    "Enter your number "
+printf_str:       .asciz    " The result is: %d\n"
+exit_str:	      .ascii 	  "Terminating program.\n"
