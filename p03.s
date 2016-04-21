@@ -26,7 +26,7 @@ _prompt:
   PUSH {R2}
   PUSH {R7}
   MOV R7, #4                  @write syscall, 4            
-  MOV R0, #1                  @output stream to monitor, 1
+  MOV R0, #1                  @output stream to monitor,1
   MOV R2, #37                 @print string length
   LDR R1, =prompt_str     
   SWI 0                       @execute syscall    
