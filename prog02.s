@@ -1,96 +1,97 @@
-.data
-
-prompt1: .asciiz "\Enter a number to partition (n): "
-prompt2: .asciiz "\Enter a number for the size of the partition (m): "
-
-.text
+.global main 
+      .func main
 
 main:
-la $r0, prompt1
-li $u0,4
-syscall
+  BL _prompt                  @branch to _prompt with return                 
+  BL _scanf                   @branch to _scanf with return
+  MOV R4, R0                  @move return value R0 to R6
+  MOV R1, R0
+  BL _fact                  @branch to _prompt with return
+  MOV R1, R4
+  MOV R2, R0
+  BL _printf
+  B _exit
+  
+_exit:
+  MOV R7, #4
+  MOV R0, #1
+  MOV R2, #21
+  LDR R1, = exit_str
+  SWI 0
+  MOV R7, #1
+  SWI 0
 
-li $u0, 5
-syscall   
-move $s0, $u0 # $s0 = n
+_prompt:               
+  PUSH {R1}
+  PUSH {R2}
+  PUSH {R7}
+  MOV R7, #4                  @write syscall, 4            
+  MOV R0, #1                  @output stream to monitor,1
+  MOV R2, #37                 @print string length
+  LDR R1, =prompt_str     
+  SWI 0                       @execute syscall    
+  POP {R7}
+  POP {R2}
+  POP {R1}
+  MOV PC, LR                  @return  
 
-la $r0, prompt2
-li $u0,4
-syscall
-
-li $u0, 5
-syscall   
-move $x1, $u0 # $x1 = m
-
-add $r0, $s0, $zero
-add $r1, $x1, $zero
-
-addi $ps,$ps,-4
-sw $rb,0($ps)
-
-jal countPartitions
-
-lw $rb,0($ps)
-addi $ps,$ps,4
-
-move $r0,$u0
-li $u0, 1
-syscall
-
-li $u0, 10
-syscall
-
-countPartitions:
-
-addi $ps,$ps,-16
-
-sw $s1,12($ps)
-sw $r1,8($ps)
-sw $r0,4($ps)
-sw $rb,0($ps)
-
-bne $r0,$zero,case1
-
-addi $u0,$u0,1
-j return
-
-case1:
-
-slti $s0,$r0,0
-beq $s0,$zero,case2
-
-j return
-
-case2:
-
-bne $r1,$zero,case3
-
-j return
-
-case3:
-
-addi $r1,$r1,-1
-jal countPartitions
-
-addi $t7,$zero,1
-mult $u0,$t7
-mflo $s1
-
-addi $r1,$r1,1
-sub $r0,$r0,$r1
-jal countPartitions
-
-addi $t7,$zero,1
-mult $u0,$t7
-mflo $x2
-
-add $u0,$s1,$x2
-
-return:
-
-lw $rb,0($ps)
-lw $r0,4($ps)
-lw $r1,8($ps)
-lw $s1,12($ps)
-addi $ps,$ps,16
-jr $rb
+_printf:
+  MOV R4, LR
+  PUSH {LR}
+  LDR R0, =printf_str
+  MOV R1, #100
+  MOV R2, #200
+  BL printf
+  POP {PC}
+  MOV PC, R4
+  
+_scanf:
+  MOV R4, LR
+  SUB SP, SP, #4
+  PUSH {LR}
+  PUSH {R1}
+  LDR R0, =format_str
+  MOV R1, SP
+  BL scanf
+  LDR R0, [SP]
+  ADD SP, SP, #4
+  POP {R1}
+  POP {PC}
+  MOV PC, R4
+  
+_fact:
+  PUSH {LR}
+  CMP R1,#1
+  MOVEQ R0, #1
+  POPEQ {PC}
+  
+  CMP R1, #1
+  MOVLT R0, #1
+  
+  CMP R2, #1
+  MOVEQ R0, #1
+  POPEQ {PC}
+  
+  PUSH {R1}
+  
+  MOV R0, R2
+  MOV R2, R1
+  SUB R1, R2, #1
+  MOV R2, R0
+  BL _fact
+  
+  POP {R1}
+  
+  SUB R2, R2, #1
+  BL _fact
+  MOV R10, R0
+  POP {R0}
+  ADD R0, R0, R8
+  POP {PC}
+   
+.data
+number:					.word 	  0
+format_str:             .asciz    "%d"
+prompt_str:             .ascii    "Enter a number and press result key: "
+printf_str:             .asciz    "Therefore, the result is: %d\n"
+exit_str:				.ascii 	  "Terminating program.\n"
