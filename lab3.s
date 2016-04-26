@@ -1,3 +1,6 @@
+.global main
+.func main
+
 .data
 
 askingn: .asciiz "\Enter positive integer number n: "
