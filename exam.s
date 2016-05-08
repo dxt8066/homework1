@@ -1,18 +1,23 @@
- 
+ /******************************************************************************
+* ProgramExam _cse2312
+* @AUTHOR Deva Timsina
+* ID:1001098066
+* PROGRAM EXAM
+******************************************************************************/
 .global main
 .func main
    
 main:
-    MOV R0, #0
+    MOV R0, #0                @move return value R0
 
 writearray:
     CMP R0, #10            
     BEQ scandone
     MOV R5, R0
-    BL _scanf
+    BL _scanf                   @call scanf procedure
     MOV R3, R0 
     MOV R0, R5
-    LDR R1, =array_a     	         
+    LDR R1, =array_a     	  @R1 contains address of array_a          
     LSL R2, R0, #2
     ADD R2, R1, R2
     STR R3, [R2]
@@ -25,17 +30,17 @@ scandone:
 _readloop:
     CMP R0, #10            
     BEQ readdone            
-    LDR R1, =array_a              
+    LDR R1, =array_a     @R1 contains address of array_a        
     LSL R2, R0, #2          
     ADD R2, R1, R2          
     LDR R1, [R2] 
-    MOV R6, R1      @ store array value for min, max and sum   
+    MOV R6, R1          @ store array value for min, max and sum   
     PUSH {R0}               
     PUSH {R1}               
     PUSH {R2}              
     MOV R2, R1              
     MOV R1, R0              
-    BL  _printf
+    BL  _printf         @call printf procedure
 
     POP {R2}                
     POP {R1}                
@@ -60,7 +65,7 @@ _readloop:
     B   _readloop  
 
 readdone:
-    BL _printminmaxsum
+    BL _printminmaxsum                 @call printminmaxsum procedure
     B _exit 
 
 _printminmaxsum:
@@ -68,11 +73,11 @@ _printminmaxsum:
     PUSH {R4}
     PUSH {R5}
     MOV R1, R7
-    BL _printmin
+    BL _printmin                         @call printmin procedure
     MOV R1, R4
     BL _printmax   
     MOV R1, R5
-    BL _printsum
+    BL _printsum                         @call printsum procedure
     POP {R7}
     POP {R4}
     POP {R5}
@@ -82,19 +87,19 @@ _exit:
     MOV R0, #1              
     MOV R2, #21             
     LDR R1, =exit_str       
-    SWI 0                   
+    SWI 0                @execute syscall           
     MOV R7, #1              
-    SWI 0  
+    SWI 0                  @execute syscall
 
 _scanf:
     MOV R4, LR              
     SUB SP, SP, #4          
     LDR R0, =format_str     
     MOV R1, SP              
-    BL scanf                
+    BL scanf                 @call scanf procedure
     LDR R0, [SP]            
     ADD SP, SP, #4          
-    MOV PC, R4               
+    MOV PC, R4             @return     
 
 _printf:
     PUSH {LR}               
